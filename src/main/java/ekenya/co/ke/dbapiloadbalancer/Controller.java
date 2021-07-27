@@ -131,6 +131,38 @@ public class Controller {
         return response.getBody();
     }
 
+    @PostMapping(value = "/db-api/authorize",produces = "application/json")
+    public String executeAuthorization(){
+
+        ServiceInstance serviceInstance = loadBalancerClient.choose(db_api_spring);
+
+        logger.info(serviceInstance.getUri().toString());
+
+
+        String baseUrl=serviceInstance.getUri().toString();
+
+        baseUrl=baseUrl+"/authorize";
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response=null;
+
+        HttpEntity<String> entity = new HttpEntity<>("");
+        try{
+
+            response = restTemplate.exchange(baseUrl, HttpMethod.POST, entity, String.class);
+
+//            response=restTemplate.exchange(baseUrl,
+//                    HttpMethod.GET, getHeaders(),String.class);
+        }catch (Exception ex)
+        {
+            //    System.out.println(ex);
+            ex.printStackTrace();
+        }
+        //   System.out.println(response.getBody());
+        return response.getBody();
+    }
+
+
     private String routeRequest(@RequestBody String body, String baseUrl) {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response=null;
